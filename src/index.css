@@ -3,6 +3,8 @@
   padding: 0;
 }
 
+
+
 h2 {
   text-align: center;
   padding-top: 50px;
@@ -71,8 +73,34 @@ h2:hover {
   color: blue;
 }
 
+.navbar img {
+  width: 85px;
+  height: 85px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+
+}
+
 .home h3 {
   text-align: center;
   padding-top: 20px;
 }
 
+.album {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-flow: row wrap;
+  margin-top: 50px;
+}
+
+.album a {
+  text-decoration: none;
+  color: black;
+}
+
+.album div {
+  margin: 5px 5px 5px 6px;
+}

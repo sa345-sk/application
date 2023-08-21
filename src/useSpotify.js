@@ -1,50 +1,70 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 const useSpotify = () => {
-    const CLIENT_ID = "58759f42dc2e44c3b4f0800fc87406d7";
-    //const CLIENT_SECRET = "49e5222d12eb4e1cac2f075d117acf54";
-    const authorize = 'https://accounts.spotify.com/authorize';
-    //const token = "https://accounts.spotify.com/api/token";
-    const response = "token";
-    const redirect = 'http://localhost:3000';
+  const CLIENT_ID = "58759f42dc2e44c3b4f0800fc87406d7";
+  const CLIENT_SECRET = "29141e34f0fb483b963e279b9ebb8ea4";
+    const getToken = "https://accounts.spotify.com/api/token";
+
     
     const [token, setToken] = useState('');
-    const [searchKey, setSearchKey] = useState(null);
-    const [artist, setArtist] = useState(null)
+    const [searchKey, setSearchKey] = useState("");
+    const [albums, setAlbums] = useState([])
+    const [error, setError] = useState(null)
+    let authParams = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: "grant_type=client_credentials&client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET
+    }
     useEffect(() => {
-      const hash = window.location.hash;
-      let token = window.localStorage.getItem('token');
-
-      if(!token && hash) {
-        token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split('=')[1];
-
-        console.log(token);
-        window.location.hash = "";
-        window.localStorage.setItem('token', token);
+      async function getData() {
+        try {
+          let response = await fetch(getToken, authParams);
+          let data = await response.json()
+          //console.log(data.access_token)
+          setToken(data.access_token) 
+          setError(null)
+        } catch (error) {
+          console.error(error.message)
+          setError(error.message)
+        }
       }
-        setToken(token);
-        console.log(token)
+
+      getData()
+
     }, [])
 
-    const logout = () => {
-        setToken("")
-        window.localStorage.removeItem('token')
-    };
 
     const searchArtist = async (e) => {
        e.preventDefault()
-       const data = await axios.get('https://api.spotify.com/v1/search', {
-        headers: {
-         Authorization: `Bearer${token}`
-       }, params: {
-          q: searchKey,
-          type: 'artist'
-       }})
-        console.log(data)
-        setArtist(data.artists.items)       
+        console.log('searching for ' + searchKey)
+        //Artist parameters
+        let searchParams = {
+          method: 'GET',
+          headers: {
+            'Content-Type' : 'application/json',
+            'Authorization' : `Bearer ${token}`
+          }
+        }
+        //Search Artist based on id
+        try {
+        let artistId = await fetch(`https://api.spotify.com/v1/search?q=${searchKey}&type=artist`, searchParams)
+        .then(response => response.json()) 
+          .then(data => { return data.artists.items[0].id })  
+         console.log(artistId)
+        //Albums
+          let returnedAlbums = await fetch(`https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&market=US&limit=50`, searchParams)
+          const data = await returnedAlbums.json();
+          setAlbums(data.items)
+          console.log(data)
+        setError(null)
+        } catch(error) {
+          console.log(error)
+          setError(error.message)
+        }
     }
- 
-    return {CLIENT_ID, authorize, response, redirect, token, logout, setSearchKey, searchArtist, artist}
+    console.log(albums)
+    return { albums, setSearchKey, searchArtist, error}
 }
  
 export default useSpotify;
