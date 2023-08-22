@@ -1,7 +1,5 @@
-import useSpotify from "./useSpotify";
 import { Link } from "react-router-dom";
-const Home = () => {
-    const { albums, setSearchKey, searchArtist } = useSpotify()
+const Home = ({ albums, setSearchKey, searchArtist }) => {
     return (
         <div className="home">
             <h2>Spotify api search for any artist that you know</h2>
@@ -14,8 +12,8 @@ const Home = () => {
                 return (
                     <Link to={album.external_urls.spotify} key={album.id} target="_blank">
                         <div>
-                        <img src={album.images[0].url} alt="" />
-                        <p>{album.name}</p>                        
+                            <img src={album.images[0].url} alt="" />
+                            <p>{album.name}</p>                        
                         </div>
                     </Link>
                 )

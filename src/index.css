@@ -7,7 +7,6 @@
 
 h2 {
   text-align: center;
-  padding-top: 50px;
 }
 
 h2:hover {
@@ -31,13 +30,11 @@ h2:hover {
 }
 
 .search button {
-  position: absolute;
-  top: 220px;
-  right: 0px;
-  left: 535px;
-  width: 300px;
+  width: fit-content;
+  height: fit-content;
   opacity: 1;
   background-color: rgb(13, 203, 73);
+  margin-top: 20px;
 }
 
 .search button:hover {
@@ -103,4 +100,12 @@ h2:hover {
 
 .album div {
   margin: 5px 5px 5px 6px;
+}
+
+.check .div {
+  height: fit-content;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-content: center;
 }

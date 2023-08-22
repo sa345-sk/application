@@ -7,7 +7,8 @@ const useSpotify = () => {
     
     const [token, setToken] = useState('');
     const [searchKey, setSearchKey] = useState("");
-    const [albums, setAlbums] = useState([])
+    const [albums, setAlbums] = useState([]);
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
     let authParams = {
       method: 'POST',
@@ -18,15 +19,18 @@ const useSpotify = () => {
     }
     useEffect(() => {
       async function getData() {
+        setLoading(true)
         try {
           let response = await fetch(getToken, authParams);
           let data = await response.json()
           //console.log(data.access_token)
           setToken(data.access_token) 
           setError(null)
+          setLoading(false)
         } catch (error) {
           console.error(error.message)
           setError(error.message)
+          setLoading(false)
         }
       }
 
@@ -47,6 +51,7 @@ const useSpotify = () => {
           }
         }
         //Search Artist based on id
+        setLoading(true)
         try {
         let artistId = await fetch(`https://api.spotify.com/v1/search?q=${searchKey}&type=artist`, searchParams)
         .then(response => response.json()) 
@@ -58,13 +63,15 @@ const useSpotify = () => {
           setAlbums(data.items)
           console.log(data)
         setError(null)
+        setLoading(false)
         } catch(error) {
           console.log(error)
-          setError(error.message)
+          setError(error)
+          setLoading(false)
         }
     }
     console.log(albums)
-    return { albums, setSearchKey, searchArtist, error}
+    return { albums, setSearchKey, searchArtist, error, loading}
 }
  
 export default useSpotify;
